@@ -1,0 +1,39 @@
+// Define pin numbers
+const int buttonPin = 2; // Interrupt pin for the push button
+const int ledPin = LED_BUILTIN; // Built-in LED pin
+
+// Variable to store the LED state
+volatile bool ledState = false;
+
+// Interrupt Service Routine (ISR) for button press
+void handleButtonPress() {
+  ledState = !ledState; // Toggle the LED state on each button press
+}
+
+void setup() {
+  // Initialize the LED pin as output
+  pinMode(ledPin, OUTPUT);
+
+  // Initialize the button pin as input with an internal pull-up resistor
+  pinMode(buttonPin, INPUT_PULLUP);
+
+  // Attach an interrupt to the button pin, trigger on FALLING (button press)
+  attachInterrupt(digitalPinToInterrupt(buttonPin), handleButtonPress, FALLING);
+
+  // Initialize serial communication for logging
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Update the LED state based on the ledState variable
+  if (ledState) {
+    digitalWrite(ledPin, HIGH); // Turn LED on
+    Serial.println("Button pressed: LED ON");
+  } else {
+    digitalWrite(ledPin, LOW);  // Turn LED off
+    Serial.println("Button released: LED OFF");
+  }
+
+  // Short delay to avoid spamming the serial monitor
+  delay(100);
+}
